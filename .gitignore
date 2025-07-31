@@ -1,0 +1,47 @@
+# Docker volumes and data
+pgdata/
+**/pgdata/
+
+# Environment files with secrets (keep templates)
+.env.local
+.env.production
+.env.staging
+
+# Docker Compose override files
+docker-compose.override.yml
+
+# Logs
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# AWS credentials
+.aws/
+aws-credentials.json
+
+# Backup files
+*.backup
+*.bak
+backup_*
+
+# Generated structure (if using create-structure.sh)
+hoppscotch-self-hosted/

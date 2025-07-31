@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: hoppscotch-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hoppscotch
+      POSTGRES_PASSWORD: hoppscotchpassword
+      POSTGRES_DB: hoppscotchdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  frontend:
+    image: hoppscotch/hoppscotch-frontend
+    container_name: hoppscotch-frontend
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+      - "3200:3200"   # Needed for desktop app support
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+  backend:
+    image: hoppscotch/hoppscotch-backend
+    container_name: hoppscotch-backend
+    env_file:
+      - .env
+    ports:
+      - "3170:3170"
+    restart: unless-stopped
+    depends_on:
+      - postgres
+
+  admin:
+    image: hoppscotch/hoppscotch-admin
+    container_name: hoppscotch-admin
+    env_file:
+      - .env
+    ports:
+      - "3100:3100"
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
