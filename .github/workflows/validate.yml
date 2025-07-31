@@ -1,0 +1,106 @@
+name: Validate Documentation and Scripts
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  validate-yaml:
+    runs-on: ubuntu-latest
+    name: Validate YAML Files
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Validate Docker Compose files
+      run: |
+        for file in */docker-compose.yml; do
+          echo "Validating $file"
+          docker-compose -f "$file" config -q
+        done
+    
+    - name: Validate CloudFormation template
+      uses: aws-actions/cfn-lint-action@v2
+      with:
+        file: cloudformation-ecs-rds.yaml
+
+  validate-scripts:
+    runs-on: ubuntu-latest
+    name: Validate Shell Scripts
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install shellcheck
+      run: sudo apt-get install -y shellcheck
+    
+    - name: Validate shell scripts
+      run: |
+        find . -name "*.sh" -exec shellcheck {} \;
+
+  validate-markdown:
+    runs-on: ubuntu-latest
+    name: Validate Markdown
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Validate markdown links
+      uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        use-quiet-mode: 'yes'
+        use-verbose-mode: 'yes'
+        config-file: '.github/markdown-link-check-config.json'
+
+  test-basic-setup:
+    runs-on: ubuntu-latest
+    name: Test Basic Setup
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Test basic setup configuration
+      run: |
+        cd basic-setup
+        # Validate environment file
+        grep -q "DATABASE_URL" .env
+        grep -q "VITE_BASE_URL" .env
+        # Validate docker-compose
+        docker-compose config -q
+        echo "✅ Basic setup validation passed"
+
+  test-email-setup:
+    runs-on: ubuntu-latest
+    name: Test Email Setup
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Test email setup configuration
+      run: |
+        cd email-setup
+        # Validate environment file
+        grep -q "MAILER_SMTP_URL" .env
+        grep -q "DATABASE_URL" .env
+        # Validate docker-compose
+        docker-compose config -q
+        echo "✅ Email setup validation passed"
+
+  test-aio-setup:
+    runs-on: ubuntu-latest
+    name: Test AIO Setup
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Test AIO setup configuration
+      run: |
+        cd aio-setup
+        # Validate environment file
+        grep -q "DATABASE_URL" .env
+        grep -q "HOPP_AIO_ALTERNATE_PORT" .env
+        # Validate docker-compose
+        docker-compose config -q
+        echo "✅ AIO setup validation passed"

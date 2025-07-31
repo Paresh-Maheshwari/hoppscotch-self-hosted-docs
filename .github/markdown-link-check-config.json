@@ -1,0 +1,27 @@
+{
+  "ignorePatterns": [
+    {
+      "pattern": "^http://localhost"
+    },
+    {
+      "pattern": "^https://localhost"
+    },
+    {
+      "pattern": "^http://YOUR_EC2_PUBLIC_IP"
+    },
+    {
+      "pattern": "^https://your-domain.com"
+    },
+    {
+      "pattern": "^https://yourdomain.com"
+    },
+    {
+      "pattern": "^https://rnsnu-152-59-22-52.a.free.pinggy.link"
+    }
+  ],
+  "timeout": "20s",
+  "retryOn429": true,
+  "retryCount": 3,
+  "fallbackRetryDelay": "30s",
+  "aliveStatusCodes": [200, 206]
+}
